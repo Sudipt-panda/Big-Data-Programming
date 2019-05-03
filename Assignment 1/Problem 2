@@ -1,0 +1,95 @@
+#include<string.h>
+#include<stdio.h>
+// pattern matching algorithm 
+	
+	// Function that matches input str with 
+	// given wildcard pattern 
+	int strmatch(char * str, char * pattern,int n, int m) 
+	{ 
+		// empty pattern can only match with 
+		// empty string 
+		if (m == 0) 
+			return (n == 0); 
+	    //pattern cannot start with a *
+	    if(pattern[0] == '*')
+	        return 0; 
+		// lookup table for storing results of 
+		// subproblems 
+		int tab[n + 1][m + 1]; 
+	
+		// initailze lookup table to false 
+		for(int i = 0; i < n + 1; i++) 
+		{
+			for(int j=0;j<m+1;j++)
+			    tab[i][j]=0;
+		}
+		
+	
+		// empty pattern can match with empty string 
+		tab[0][0] = 1; 
+	
+		// Only '*' can match with empty string 
+		for (int j = 1; j <= m; j++) 
+			if (pattern[(j - 1)] == '*') 
+				tab[0][j] = tab[0][j - 1]; 
+	
+		// fill the table in bottom-up fashion 
+		for (int i = 1; i <= n; i++) 
+		{ 
+			for (int j = 1; j <= m; j++) 
+			{ 
+				// Two cases if we see a '*' 
+				// a) We ignore '*'' character and move 
+				// to next character in the pattern, 
+				//	 i.e., '*' indicates an empty sequence. 
+				// b) '*' character matches with ith 
+				//	 character in input 
+				if (pattern[(j - 1)] == '*') 
+					tab[i][j] = tab[i][j - 1] || tab[i - 1][j]; 
+	
+				// Current characters are considered as 
+				// matching in two cases 
+				// (a) current character of pattern is '.' 
+				// (b) characters actually match 
+				else if (pattern[(j - 1)] == '.' || 
+					str[(i - 1)] == pattern[(j - 1)]) 
+					tab[i][j] = tab[i - 1][j - 1]; 
+	
+				// If characters don't match 
+				else tab[i][j] = 0; 
+			} 
+		} 
+	
+		return tab[n][m]; 
+	} 
+	
+	int main() 
+	{ 
+        //  char  str[10] = "aaa";//Ex-6 
+		//  char pattern[10] = "a*"; //True
+        //char str[10] = "cab";//Ex-5 
+		//char pattern[10] = "c*a*b";//True
+        //char str[10] = "ab"; //Ex-4
+        //char pattern[10] = ".";//False
+        //char str[10] = "ab"; //Ex-3
+		//char pattern[10] = ".*";//True
+        //char str[10] = "aa"; //Ex-2
+		//char pattern[10] = "a*"; //True
+	    //char str[10] = "aba"; //Ex-1
+		//char pattern[10] = "*ab"; //False 	
+		//char str[10] = "dcb"; 
+		//char pattern[10] = "dca*b"; //False
+	   char str[100]; 
+    char pattern[100]; 
+    printf("\nEnter Text String :");
+    gets(str);
+    printf("\nEnter Pattern String :");
+    gets(pattern); 
+	   
+	    if (strmatch(str, pattern, strlen(str), strlen(pattern))) 
+			printf("True"); 
+		else
+			printf("False"); 	
+	} 
+ 
+
